@@ -12,12 +12,12 @@
 # ─────────────────────────────────────────────────────────────────────────────
 
 project:
-  name: "{{PROJECT_NAME}}"
-  owner: "{{GITHUB_OWNER}}"
-  team: "{{TEAM_NAME}}"
-  domain: "{{PROJECT_DOMAIN}}"
-  description: "{{PROJECT_DESCRIPTION}}"
-  tech_stack: "{{TECH_STACK}}"   # comma-separated, e.g. "python, fastapi, docker"
+  name: "arananet-site"
+  owner: "arananet"
+  team: "arananet"
+  domain: "web"
+  description: "Personal hub and live lab for Eduardo Arana (arananet.net), built with Astro and deployed on Railway."
+  tech_stack: "typescript, astro, nodejs, docker"   # comma-separated, e.g. "python, fastapi, docker"
 
 spec:
   required_fields:
@@ -37,7 +37,7 @@ spec:
 
 testing:
   require_tests: true
-  test_command: "{{TEST_COMMAND}}"
+  test_command: "npm test"
   coverage_threshold: null
   fail_on_missing_tests: true
 
@@ -132,7 +132,7 @@ roles:
   # Default role assignments for new specs. When set, these are
   # pre-filled into the roles block of scaffolded specs.
   # Use GitHub usernames or team handles (e.g. "@username", "@org/team").
-  default_implementer: null
-  default_reviewer: null
-  default_qa: null
-  default_product_owner: null
+  default_implementer: "@arananet"
+  default_reviewer: "@arananet"
+  default_qa: "@arananet"
+  default_product_owner: "@arananet"

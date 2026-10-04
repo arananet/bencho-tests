@@ -1,0 +1,101 @@
+---
+import Base from '../../layouts/Base.astro';
+import { loadSpecs } from '../../lib/specs';
+
+const specs = await loadSpecs();
+---
+
+<Base title="Spec wall" description="The OpenSpec specs that define arananet.net, rendered live from the repository.">
+  <section class="wrap">
+    <p class="eyebrow">Lab · spec wall</p>
+    <h1>This site, as specs</h1>
+    <p class="lead">
+      Every feature on arananet.net starts as an OpenSpec file with acceptance criteria and a test plan. These are read
+      straight from <code class="mono">.openspec/specs/</code> on each request.
+    </p>
+
+    {specs.length === 0 && <p class="card">No specs found.</p>}
+
+    <div class="specs">
+      {
+        specs.map((spec) => (
+          <article class="card spec" id={spec.slug}>
+            <header>
+              <span class={`status ${spec.status}`}>{spec.status}</span>
+              <span class="tag">{spec.type}</span>
+            </header>
+            <h2>{spec.title}</h2>
+            <p class="description">{spec.description}</p>
+            <p class="mono meta">
+              {spec.criteria.length} acceptance criteria · {spec.tests} test plan items
+            </p>
+            <details>
+              <summary>Acceptance criteria</summary>
+              <ol>
+                {spec.criteria.map((criterion) => (
+                  <li>{criterion}</li>
+                ))}
+              </ol>
+            </details>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  h1 {
+    font-size: clamp(2rem, 6vw, 3.2rem);
+  }
+  .lead {
+    color: var(--muted);
+    max-width: 62ch;
+    font-size: 1.1rem;
+    margin: 16px 0 36px;
+  }
+  .specs {
+    display: grid;
+    gap: 16px;
+  }
+  .spec header {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .status {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--muted);
+  }
+  .status.review,
+  .status.approved {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .spec h2 {
+    font-size: 1.4rem;
+  }
+  .description {
+    color: var(--muted);
+  }
+  .meta {
+    font-size: 0.8rem;
+    color: var(--accent);
+  }
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+  }
+  li {
+    margin-bottom: 8px;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,188 @@
+---
+import { profile } from '../data/profile';
+
+const suggestions = ['help', 'about', 'projects', 'lab', 'contact'];
+---
+
+<div class="terminal" id="terminal" data-terminal>
+  <div class="bar" aria-hidden="true">
+    <span></span><span></span><span></span>
+    <p class="mono">{profile.handle}@{profile.domain}: ~</p>
+  </div>
+  <div class="screen mono" data-screen role="log" aria-live="polite" aria-label="Terminal output">
+    <p class="muted">Welcome to the lab. Type <b>help</b> and press Enter.</p>
+  </div>
+  <form class="input mono" data-form autocomplete="off">
+    <label for="terminal-input"><span class="prompt">$</span><span class="sr-only">Command</span></label>
+    <input id="terminal-input" name="command" spellcheck="false" autocapitalize="off" placeholder="help" />
+  </form>
+  <div class="chips">
+    {suggestions.map((command) => <button type="button" class="mono" data-run={command}>{command}</button>)}
+  </div>
+</div>
+
+<script>
+  import { runCommand, type TerminalLine } from '../lib/terminal';
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-terminal]')) {
+    const screen = root.querySelector<HTMLElement>('[data-screen]')!;
+    const form = root.querySelector<HTMLFormElement>('[data-form]')!;
+    const input = form.querySelector('input')!;
+    const history: string[] = [];
+    let cursor = 0;
+
+    const line = ({ text, href, kind = 'out' }: TerminalLine): HTMLElement => {
+      const p = document.createElement('p');
+      p.className = kind;
+      if (href) {
+        const a = document.createElement('a');
+        a.href = href;
+        a.textContent = text;
+        p.append(a);
+      } else {
+        p.textContent = text;
+      }
+      return p;
+    };
+
+    const execute = (raw: string) => {
+      const echo = document.createElement('p');
+      echo.className = 'echo';
+      echo.textContent = `$ ${raw}`;
+      const result = runCommand(raw);
+      if (result.clear) screen.replaceChildren();
+      else screen.append(echo, ...result.lines.map(line));
+      if (raw.trim()) history.push(raw.trim());
+      cursor = history.length;
+      screen.scrollTop = screen.scrollHeight;
+    };
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      execute(input.value);
+      input.value = '';
+    });
+
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowUp' && cursor > 0) {
+        cursor -= 1;
+      } else if (event.key === 'ArrowDown' && cursor < history.length) {
+        cursor += 1;
+      } else {
+        return;
+      }
+      event.preventDefault();
+      input.value = history[cursor] ?? '';
+    });
+
+    for (const button of root.querySelectorAll<HTMLButtonElement>('[data-run]')) {
+      button.addEventListener('click', () => {
+        execute(button.dataset.run ?? '');
+        input.focus();
+      });
+    }
+  }
+</script>
+
+<style>
+  .terminal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.6);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .bar span {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--line);
+  }
+  .bar p {
+    margin: 0 0 0 8px;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .screen {
+    height: 260px;
+    overflow-y: auto;
+    padding: 16px 16px 4px;
+    font-size: 0.88rem;
+  }
+  .screen :global(p) {
+    margin: 0 0 4px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .screen :global(.echo) {
+    color: var(--accent);
+    margin-top: 8px;
+  }
+  .screen :global(.muted) {
+    color: var(--muted);
+  }
+  .screen :global(.error) {
+    color: var(--danger);
+  }
+  .input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px 14px;
+  }
+  .prompt {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: var(--text);
+    font: inherit;
+    font-size: 0.95rem;
+    padding: 6px 0;
+  }
+  input:focus-visible {
+    outline: none;
+  }
+  .input:focus-within {
+    box-shadow: inset 0 -2px 0 var(--accent);
+  }
+  .chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 0 16px 16px;
+  }
+  .chips button {
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .chips button:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+</style>
