@@ -1,0 +1,8 @@
+.git
+node_modules
+dist
+.astro
+.openspec/runs
+tools/lint/node_modules
+coverage
+*.log

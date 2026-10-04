@@ -1,0 +1,129 @@
+---
+import Base from '../layouts/Base.astro';
+import Terminal from '../components/Terminal.astro';
+import { experiments, profile, projects } from '../data/profile';
+---
+
+<Base>
+  <section class="hero wrap">
+    <div>
+      <p class="eyebrow">Personal hub · live lab</p>
+      <h1>{profile.name}</h1>
+      <p class="tagline">{profile.tagline}</p>
+      <div class="actions">
+        <a class="button primary" href="#projects">See what I build</a>
+        <a class="button" href={profile.kofi} rel="noopener">Buy me a coffee on Ko-fi</a>
+      </div>
+    </div>
+    <Terminal />
+  </section>
+
+  <section class="wrap" id="about">
+    <p class="eyebrow">About</p>
+    <div class="about">
+      {profile.about.map((paragraph) => <p>{paragraph}</p>)}
+    </div>
+  </section>
+
+  <section class="wrap" id="projects">
+    <p class="eyebrow">Projects</p>
+    <h2>Things I build</h2>
+    <div class="grid list">
+      {
+        projects.map((project) => (
+          <a class="card project" href={project.href}>
+            <h3>{project.name}</h3>
+            <p>{project.blurb}</p>
+            <div class="tags">
+              {project.tags.map((tag) => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap" id="lab">
+    <p class="eyebrow">Lab</p>
+    <h2>Experiments that actually run</h2>
+    <div class="grid list">
+      {
+        experiments.map((experiment, index) => (
+          <a class="card project" href={experiment.href}>
+            <span class="mono index">{String(index + 1).padStart(2, '0')}</span>
+            <h3>{experiment.name}</h3>
+            <p>{experiment.blurb}</p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: 40px;
+    align-items: center;
+    grid-template-columns: 1fr;
+    padding-top: 40px;
+  }
+  @media (min-width: 900px) {
+    .hero {
+      grid-template-columns: 1fr 1.05fr;
+      padding-top: 72px;
+    }
+  }
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 4.4rem);
+  }
+  .tagline {
+    font-size: 1.2rem;
+    color: var(--muted);
+    max-width: 34ch;
+  }
+  .actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  h2 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    margin-bottom: 28px;
+  }
+  .about {
+    max-width: 62ch;
+    font-size: 1.1rem;
+  }
+  .about p {
+    margin: 0 0 14px;
+  }
+  .project {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition:
+      border-color 0.2s,
+      transform 0.2s;
+  }
+  .project:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .project p {
+    color: var(--muted);
+    margin: 8px 0 14px;
+  }
+  .tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .index {
+    color: var(--accent);
+    font-size: 0.8rem;
+  }
+</style>

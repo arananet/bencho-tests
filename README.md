@@ -1,75 +1,91 @@
-# {{PROJECT_NAME}}
+# arananet-site
 
-{{BADGES}}
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white) ![Astro](https://img.shields.io/badge/Astro-gray) ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white) ![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white) ![OpenSpec](https://img.shields.io/badge/OpenSpec-enforced-blueviolet) ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-> {{PROJECT_DESCRIPTION}}
+> Personal hub and live lab for Eduardo Arana (arananet.net), built with Astro and deployed on Railway.
+
+The site is a hub (about, projects, contact, Ko-fi) plus a **lab** of demos
+that actually run:
+
+- **Terminal**: navigate the site from a shell on the home page. Try `help`.
+- **Spec wall** (`/lab/specs`): renders this repository's own OpenSpec specs
+  live, so the site documents the spec-driven (benchodev) workflow that builds it.
+- **Health** (`/api/health`): the JSON endpoint Railway uses as its healthcheck.
 
 ---
-
-## Start With This Template
-
-For a new project, use **Use this template** on GitHub, then clone your new
-repository. Install Bash, Git, and Ruby >= 2.6; no AI runtime is required.
-
-1. Follow [project onboarding](docs/ONBOARDING.md) to confirm project values,
-   configure the test command, and remove template-only specs in your new copy.
-   Work manually or with your coding agent; do not run cleanup on this template.
-2. Run `bash setup.sh`, then `bash scripts/openspec scaffold "first-change"`.
-   Agree on scope, acceptance criteria, and tests before setting `status: review`.
-3. Implement one small change with its tests. Run `bash scripts/openspec check`,
-   `bash scripts/openspec verify first-change`, and `bash scripts/openspec status first-change`.
-4. Submit the spec, implementation, tests, and relevant docs together for human
-   review. A passing command is evidence, not approval to merge.
-
-That is the core loop. [Optional capabilities](docs/ADOPTION.md#compose-by-need)
-can follow when needed; this path does not disable shipped security workflows.
-Maintaining the template itself? Use the [local verification guide](docs/ADOPTION.md#template-verification)
-and preserve all placeholders. Replace this section with project-specific guidance
-after onboarding.
 
 ## Quick start
 
+Requires Node.js >= 22.12 and npm. The OpenSpec hooks also need Bash, Git and
+Ruby >= 2.6.
+
 ```bash
-# 1. Clone and install
-git clone https://github.com/{{GITHUB_OWNER}}/{{PROJECT_NAME}}.git
-cd {{PROJECT_NAME}}
-bash setup.sh
+git clone https://github.com/arananet/bencho-tests.git
+cd bencho-tests
+npm ci
+bash setup.sh   # installs the OpenSpec git hooks
 
-# 2. Run
-{{TEST_COMMAND}}
+npm run dev     # http://localhost:4321
+npm test        # unit + integration tests (builds and boots the server)
 ```
-
-<!--
-Replace this section with how to actually install and run YOUR project:
-language version, dependencies, env vars, run command, etc.
--->
-
----
 
 ## Usage
 
-<!-- TODO: Show the smallest useful example of your project in action. -->
+Edit the copy in [`src/data/profile.ts`](src/data/profile.ts): name, tagline,
+about paragraphs, links, projects, and lab experiments. The terminal commands
+read from the same file, so they stay in sync.
+
+```bash
+npm run build && PORT=8080 npm start
+curl http://localhost:8080/api/health
+# {"status":"ok","version":"0.1.0","uptime":3}
+```
+
+| Path | What it is |
+| --- | --- |
+| `src/pages/` | Routes: `/`, `/lab/specs`, `/api/health`, 404 |
+| `src/lib/` | Pure logic: terminal commands, spec loader, health, security headers |
+| `src/middleware.ts` | Adds CSP and security headers to production responses |
+| `tests/unit/`, `tests/integration/` | Vitest suites |
+| `Dockerfile`, `railway.json` | Railway deployment |
+
+---
+
+## Deploy on Railway
+
+```mermaid
+flowchart LR
+  A[Push to GitHub] --> B[Railway builds Dockerfile]
+  B --> C[node dist/server/entry.mjs on $PORT]
+  C --> D{GET /api/health}
+  D -- 200 --> E[Live on arananet.net]
+```
+
+1. In Railway, create a project, then **Deploy from GitHub repo** and pick
+   this repository. Railway reads [`railway.json`](railway.json): Dockerfile
+   build, `/api/health` healthcheck, restart on failure.
+2. No environment variables are required. Railway injects `PORT`; the image
+   listens on `0.0.0.0`. Optional: `SPECS_DIR` overrides where the spec wall
+   reads specs from.
+3. Under **Settings → Networking**, add the custom domain `arananet.net` (and
+   `www`), then create the DNS records Railway shows at your DNS provider.
 
 ---
 
 ## Contributing
 
-This project uses **OpenSpec** for spec-driven development — every feature
-or bugfix starts with a spec file under `.openspec/specs/`. Each spec
-includes a `roles` block to assign responsibility (`implementer`,
-`reviewer`, `qa`, `product_owner`). See
-[`docs/OPENSPEC.md`](docs/OPENSPEC.md) for the full workflow, or
+This project uses **OpenSpec** for spec-driven development: every feature
+or bugfix starts with a spec file under `.openspec/specs/`, and the spec,
+implementation, and tests ship together.
+
+```bash
+bash scripts/openspec scaffold "my feature"
+bash scripts/openspec check
+bash scripts/openspec verify <slug>
+```
+
+See [`docs/OPENSPEC.md`](docs/OPENSPEC.md) for the workflow and
 [`CONTRIBUTING.md`](CONTRIBUTING.md) for the contributor checklist.
-
-For small projects, use one concise spec and focused tests; no extra plan
-document or specialist is required. Roles are responsibilities, not a minimum
-team size. See [incremental adoption](docs/ADOPTION.md) for optional enterprise
-capabilities and known enforcement limits. AI spec review is opt-in.
-
-The OpenSpec CLI and hooks require Bash, Git and Ruby >= 2.6 (no gems).
-Run `bash scripts/openspec verify <slug>` to record test evidence and
-`bash scripts/openspec status` to inspect freshness. Manual work needs no AI
-runtime; bounded agent execution is separately opt-in. See [execution](docs/EXECUTION.md).
 
 ---
 
@@ -79,7 +95,6 @@ runtime; bounded agent execution is separately opt-in. See [execution](docs/EXEC
 | --- | --- |
 | Spec-driven workflow | [`docs/OPENSPEC.md`](docs/OPENSPEC.md) |
 | Small-project adoption and assessment | [`docs/ADOPTION.md`](docs/ADOPTION.md) |
-| Guided project setup | [`docs/ONBOARDING.md`](docs/ONBOARDING.md) |
 | Branch protection setup | [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md) |
 | Architecture decisions | [`docs/adr/`](docs/adr/) |
 | Security policy | [`SECURITY.md`](SECURITY.md) |

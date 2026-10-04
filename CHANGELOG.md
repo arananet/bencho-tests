@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `{{PROJECT_NAME}}` will be documented in this file.
+All notable changes to `arananet-site` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -20,6 +20,21 @@ Guidelines:
 -->
 
 ## [Unreleased]
+
+### Added
+
+- arananet.net v1: Astro + TypeScript personal hub and live lab with an interactive terminal, a spec wall at `/lab/specs`, `/api/health`, security headers, and Railway deployment via `Dockerfile` and `railway.json` (spec: arananet-site-foundation).
+- Project onboarding: `.openspec/config.yaml`, governance files, and CODEOWNERS configured for `arananet-site` owned by `@arananet`.
+
+### Changed
+
+- The spec-check test job sets up Node 22 and installs npm dependencies before running `npm test`.
+
+### Removed
+
+- Template-internal specs and the template smoke-test workflow, which only apply to the unconfigured template.
+
+## Template baseline (OpenSpec template, before onboarding)
 
 ### Added
 
@@ -71,4 +86,4 @@ Commits: `0a92a2d`, `035a861`, `5adbfbe`.
 
 - Initial repository commit (`d07225a`). No tagged release date is recorded in the local Git history.
 
-[Unreleased]: https://github.com/{{GITHUB_OWNER}}/{{PROJECT_NAME}}/commits/HEAD
+[Unreleased]: https://github.com/arananet/bencho-tests/commits/HEAD

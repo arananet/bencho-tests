@@ -1,0 +1,57 @@
+---
+title: arananet site foundation
+slug: arananet-site-foundation
+type: feature
+status: review
+author: Claude
+created_at: '2026-10-04'
+updated_at: '2026-10-04'
+roles:
+  implementer: "@arananet"
+  reviewer: "@arananet"
+  qa: "@arananet"
+  product_owner: "@arananet"
+description: |
+  Build the first version of arananet.net as a "personal hub + live lab":
+  an Astro + TypeScript site served by the Astro Node adapter and deployed
+  on Railway from a Dockerfile. The hub introduces Eduardo Arana, lists
+  projects, and links to contact and ko-fi. The lab shows live, working
+  demos instead of screenshots. Two lab demos ship first: an interactive
+  terminal on the home page that navigates the site by command, and a
+  "spec wall" that renders this repository's own OpenSpec specs, so the
+  site documents the spec-driven (benchodev) workflow that builds it.
+  A health endpoint lets Railway check the deployment.
+acceptance_criteria:
+  - "Given the server is running, when GET / is requested, then it returns 200 HTML containing the owner's name, a projects section, the lab terminal, and a ko-fi link."
+  - "Given the server is running, when GET /api/health is requested, then it returns 200 JSON with status 'ok', the app version, and uptime in seconds."
+  - "Given the terminal, when a visitor enters help, about, projects, lab, specs, contact, or clear, then it prints the matching output; an unknown command prints a 'command not found' hint; empty input prints nothing."
+  - "Given the repository's .openspec/specs/*.spec.yaml files, when GET /lab/specs is requested, then each spec is listed with title, status, and acceptance criteria count; a malformed spec file is skipped rather than breaking the page."
+  - "Given an unknown path, when it is requested, then a 404 page is returned with a link home."
+  - "Given any HTML response, then it carries security headers: Content-Security-Policy, X-Content-Type-Options nosniff, Referrer-Policy, and X-Frame-Options DENY."
+  - "Given Railway, when the service deploys from the Dockerfile, then it listens on 0.0.0.0:$PORT and Railway's healthcheck uses /api/health (railway.json)."
+test_plan:
+  - "Unit test (tests/unit/terminal.test.ts): every terminal command, case/whitespace normalization, unknown and empty input."
+  - "Unit test (tests/unit/specs.test.ts): spec loader parses valid YAML, counts criteria, sorts by title, skips malformed and non-spec files."
+  - "Unit test (tests/unit/health.test.ts): health payload shape and non-negative integer uptime."
+  - "Integration test (tests/integration/server.test.ts): build the site, start the Node server on a free port, and assert /, /api/health, /lab/specs, a 404 path, and security headers."
+qa_notes: |
+  Manually check the terminal with keyboard only (Tab focus, Enter, arrow-up
+  history), in light and dark OS themes, and at 375px width. After the first
+  Railway deploy, confirm the healthcheck passes and the custom domain
+  arananet.net resolves.
+out_of_scope:
+  - "Blog/CMS, analytics, and a contact form backend."
+  - "AI chat features or any paid API usage."
+  - "DNS changes and creating the Railway project (done by the owner in the Railway dashboard)."
+  - "Final biography and project copy: placeholders in src/data/profile.ts are for the owner to edit."
+implementation_skill:
+eval_plan:
+  scenarios: []
+  metrics: []
+technical_notes: |
+  Astro 5 with @astrojs/node in standalone mode, output 'server' so the spec
+  wall and health endpoint are rendered per request. Vitest for unit and
+  integration tests. Node 22 LTS in a multi-stage Dockerfile running as a
+  non-root user. Railway config lives in railway.json.
+linked_issues: []
+linked_prs: []
