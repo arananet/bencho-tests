@@ -58,6 +58,7 @@ describe('built server', () => {
     expect(html).toContain('id="projects"');
     expect(html).toContain('data-terminal');
     expect(html).toContain('https://ko-fi.com/H2H51MPWG');
+    expect(html).toContain('href="https://bencho.dev/"');
   });
 
   it('reports health as JSON', async () => {

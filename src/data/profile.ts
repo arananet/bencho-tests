@@ -27,13 +27,14 @@ export const profile = {
     { label: 'Ko-fi', href: 'https://ko-fi.com/H2H51MPWG' },
   ] satisfies Link[],
   kofi: 'https://ko-fi.com/H2H51MPWG',
+  benchodev: 'https://bencho.dev/',
 } as const;
 
 export const projects: Project[] = [
   {
     name: 'benchodev',
     blurb: 'A spec-driven development framework: OpenSpec specs, git hooks, CI gates, and agent instructions that keep humans and AI agents honest.',
-    href: 'https://github.com/arananet',
+    href: 'https://bencho.dev/',
     tags: ['openspec', 'ruby', 'ci'],
   },
   {

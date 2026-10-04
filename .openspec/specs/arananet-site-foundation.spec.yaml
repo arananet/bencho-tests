@@ -22,7 +22,7 @@ description: |
   site documents the spec-driven (benchodev) workflow that builds it.
   A health endpoint lets Railway check the deployment.
 acceptance_criteria:
-  - "Given the server is running, when GET / is requested, then it returns 200 HTML containing the owner's name, a projects section, the lab terminal, and a ko-fi link."
+  - "Given the server is running, when GET / is requested, then it returns 200 HTML containing the owner's name, a projects section, the lab terminal, a ko-fi link, and a link to the benchodev framework at https://bencho.dev/."
   - "Given the server is running, when GET /api/health is requested, then it returns 200 JSON with status 'ok', the app version, and uptime in seconds."
   - "Given the terminal, when a visitor enters help, about, projects, lab, specs, contact, or clear, then it prints the matching output; an unknown command prints a 'command not found' hint; empty input prints nothing."
   - "Given the repository's .openspec/specs/*.spec.yaml files, when GET /lab/specs is requested, then each spec is listed with title, status, and acceptance criteria count; a malformed spec file is skipped rather than breaking the page."

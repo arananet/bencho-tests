@@ -9,7 +9,8 @@ that actually run:
 
 - **Terminal**: navigate the site from a shell on the home page. Try `help`.
 - **Spec wall** (`/lab/specs`): renders this repository's own OpenSpec specs
-  live, so the site documents the spec-driven (benchodev) workflow that builds it.
+  live, so the site documents the spec-driven [benchodev](https://bencho.dev/)
+  workflow that builds it.
 - **Health** (`/api/health`): the JSON endpoint Railway uses as its healthcheck.
 
 ---
